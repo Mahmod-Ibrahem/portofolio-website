@@ -1,0 +1,16 @@
+/* ═══════════ CAREEM FONT FACE ═══════════ */
+@font-face {
+    font-family: "Careem";
+    src: url("./fonts/careemRegular.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Careem";
+    src: url("./fonts/careemBold.otf") format("opentype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
