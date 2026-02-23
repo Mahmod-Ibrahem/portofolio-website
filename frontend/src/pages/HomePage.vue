@@ -140,9 +140,7 @@ onUnmounted(() => observer?.disconnect())
                     </div>
                 </div>
 
-                <div class="hero-floating-card anim-stagger" style="--i:4">
-                    {{ page.hero_floating_text }}
-                </div>
+
             </header>
 
             <!-- ═══════════════ EXPERTISE CARDS ═══════════════ -->

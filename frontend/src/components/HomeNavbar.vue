@@ -7,10 +7,9 @@
             <div class="nav-links">
                 <button class="nav-link" @click="scrollTo('expertise')">الخبرات</button>
                 <button class="nav-link" @click="scrollTo('achievements')">الإنجازات</button>
-                <button class="nav-link" @click="scrollTo('consult')">الاستشارات</button>
                 <button class="nav-link" @click="scrollTo('volunteer')">التطوع</button>
                 <button class="nav-link" @click="scrollTo('articles')">المقالات</button>
-                <button class="nav-link" @click="scrollTo('videos')">الفيديوهات</button>
+                <button class="nav-link" @click="scrollTo('videos')">الظهور الأعلامي</button>
                 <button class="nav-link" @click="scrollTo('contact')">التواصل</button>
             </div>
 
