@@ -57,12 +57,12 @@
                     <p v-if="errors.hero_quote" class="form-error">{{ errors.hero_quote[0] }}</p>
                 </div>
 
-                <div>
+                <!-- <div>
                     <label class="form-label">النص العائم</label>
                     <textarea v-model="form.hero_floating_text" rows="2" class="input"
                         placeholder="لتقديم استشارات..."></textarea>
                     <p v-if="errors.hero_floating_text" class="form-error">{{ errors.hero_floating_text[0] }}</p>
-                </div>
+                </div> -->
 
                 <div>
                     <label class="form-label">صورة البطل</label>

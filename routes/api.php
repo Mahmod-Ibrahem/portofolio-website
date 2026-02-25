@@ -91,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Gallery Management (Auth)
     Route::post('galleries', [GalleryController::class, 'store']);
-    Route::post('galleries/bulk', [GalleryController::class, 'bulk']);
     Route::post('galleries/{gallery}', [GalleryController::class, 'update']);
     Route::delete('galleries/{gallery}', [GalleryController::class, 'destroy']);
 

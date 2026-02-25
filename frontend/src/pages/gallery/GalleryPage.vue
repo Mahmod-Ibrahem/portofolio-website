@@ -16,7 +16,13 @@
                     <span v-if="store.meta.total" class="gallery-count">{{ store.meta.total }} صورة</span>
                 </p>
             </div>
-            <ImageUploadButton @uploaded="onUploaded" />
+            <button class="add-btn" @click="openAddModal">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>إضافة صورة</span>
+            </button>
         </div>
 
         <!-- Toast Notifications -->
@@ -77,14 +83,20 @@
             </div>
             <h3 class="state-title">لا توجد صور بعد</h3>
             <p class="state-text">أضف أول صورة لمعرض الصور الخاص بك</p>
-            <ImageUploadButton @uploaded="onUploaded" />
+            <button class="add-btn" @click="openAddModal">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>إضافة صورة</span>
+            </button>
         </div>
 
         <!-- Gallery Grid -->
         <div v-else class="gallery-grid">
             <TransitionGroup name="card">
                 <GalleryCard v-for="item in store.galleries" :key="item.id" :item="item" @click="onCardClick"
-                    @delete="onDeleteClick" />
+                    @edit="onEditClick" @delete="onDeleteClick" />
             </TransitionGroup>
         </div>
 
@@ -113,6 +125,10 @@
             </div>
         </div>
 
+        <!-- Gallery Modal (Add / Edit) -->
+        <GalleryModal :open="galleryModal.open" :edit-item="galleryModal.editItem" @close="galleryModal.open = false"
+            @saved="onSaved" />
+
         <!-- Confirm Delete Modal -->
         <ConfirmModal :open="deleteModal.open" title="حذف الصورة؟"
             message="هل أنت متأكد من أنك تريد حذف هذه الصورة؟ لا يمكن التراجع عن هذا الإجراء." @confirm="confirmDelete"
@@ -136,11 +152,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useGalleryStore } from '../../stores/gallery'
 import GalleryCard from '../../components/gallery/GalleryCard.vue'
+import GalleryModal from '../../components/gallery/GalleryModal.vue'
 import ConfirmModal from '../../components/gallery/ConfirmModal.vue'
-import ImageUploadButton from '../../components/gallery/ImageUploadButton.vue'
 
 const store = useGalleryStore()
 
@@ -166,10 +182,26 @@ function loadData(page = 1) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Upload callback                                                    */
+/*  Gallery Modal (Add / Edit)                                         */
 /* ------------------------------------------------------------------ */
-function onUploaded(newItems) {
-    showToast('تم رفع الصور بنجاح ✓')
+const galleryModal = reactive({ open: false, editItem: null })
+
+function openAddModal() {
+    galleryModal.editItem = null
+    galleryModal.open = true
+}
+
+function onEditClick(item) {
+    galleryModal.editItem = item
+    galleryModal.open = true
+}
+
+function onSaved(action) {
+    if (action === 'created') {
+        showToast('تم إضافة الصورة بنجاح ✓')
+    } else {
+        showToast('تم تحديث الصورة بنجاح ✓')
+    }
 }
 
 /* ------------------------------------------------------------------ */
@@ -263,6 +295,30 @@ onMounted(() => loadData())
     font-weight: 600;
     color: #38bdf8;
     background: rgba(14, 165, 233, 0.12);
+}
+
+/* Add Button */
+.add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: white;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
+    font-family: inherit;
+}
+
+.add-btn:hover {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+    transform: translateY(-1px);
 }
 
 /* ============================================================== */

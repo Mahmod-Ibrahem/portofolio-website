@@ -28,9 +28,6 @@
                         </h2>
                     </div>
 
-                    <!-- <div class="flex items-center gap-3">
-                        <NotificationModel />
-                    </div> -->
                 </div>
             </header>
 
@@ -49,7 +46,6 @@ import { ref, onMounted } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import Sidebar from '../components/core/Sidebar.vue'
-import NotificationModel from '../components/Notifications/NotificationModel.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()

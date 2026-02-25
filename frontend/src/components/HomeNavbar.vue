@@ -10,6 +10,7 @@
                 <button class="nav-link" @click="scrollTo('volunteer')">التطوع</button>
                 <button class="nav-link" @click="scrollTo('articles')">المقالات</button>
                 <button class="nav-link" @click="scrollTo('videos')">الظهور الأعلامي</button>
+                <button class="nav-link" @click="scrollTo('gallery')">معرض الصور</button>
                 <button class="nav-link" @click="scrollTo('contact')">التواصل</button>
             </div>
 

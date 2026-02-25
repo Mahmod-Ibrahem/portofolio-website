@@ -10,7 +10,6 @@ use App\Models\Gallery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class GalleryController extends Controller
 {
@@ -49,51 +48,27 @@ class GalleryController extends Controller
     }
 
     /* ------------------------------------------------------------------ */
-    /*  STORE  (single OR multi-upload)                                    */
+    /*  STORE  (single image upload)                                      */
     /* ------------------------------------------------------------------ */
 
     public function store(StoreGalleryRequest $request): JsonResponse
     {
-        $files = [];
-
-        // Collect files — either a single `image` or `images[]`
-        if ($request->hasFile('images')) {
-            $files = $request->file('images');
-        } elseif ($request->hasFile('image')) {
-            $files = [$request->file('image')];
-        }
-
-        $created = [];
+        $path    = $request->file('image')->store('galleries', 'public');
         $maxSort = Gallery::max('sort_order') ?? 0;
 
-        foreach ($files as $file) {
-            $path = $file->store('galleries', 'public');
-
-            $created[] = Gallery::create([
-                'title'      => $request->input('title'),
-                'image_path' => $path,
-                'alt_text'   => $request->input('alt_text'),
-                'sort_order' => ++$maxSort,
-                'is_active'  => true,
-            ]);
-        }
+        $gallery = Gallery::create([
+            'title'      => $request->input('title'),
+            'image_path' => $path,
+            'alt_text'   => $request->input('alt_text'),
+            'sort_order' => $maxSort + 1,
+            'is_active'  => true,
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => count($created) === 1
-                ? 'تم رفع الصورة بنجاح'
-                : 'تم رفع ' . count($created) . ' صور بنجاح',
-            'data'    => GalleryResource::collection($created),
+            'message' => 'تم رفع الصورة بنجاح',
+            'data'    => new GalleryResource($gallery),
         ], 201);
-    }
-
-    /* ------------------------------------------------------------------ */
-    /*  BULK UPLOAD  (POST /api/galleries/bulk)                           */
-    /* ------------------------------------------------------------------ */
-
-    public function bulk(StoreGalleryRequest $request): JsonResponse
-    {
-        return $this->store($request);
     }
 
     /* ------------------------------------------------------------------ */
@@ -106,7 +81,7 @@ class GalleryController extends Controller
 
         // Replace image if a new one is provided
         if ($request->hasFile('image')) {
-            // Gracefully delete old file
+            // Delete old file gracefully
             if ($gallery->image_path) {
                 try {
                     Storage::disk('public')->delete($gallery->image_path);
@@ -137,7 +112,7 @@ class GalleryController extends Controller
 
     public function destroy(Gallery $gallery): JsonResponse
     {
-        // Gracefully delete file
+        // Delete file gracefully
         if ($gallery->image_path) {
             try {
                 Storage::disk('public')->delete($gallery->image_path);

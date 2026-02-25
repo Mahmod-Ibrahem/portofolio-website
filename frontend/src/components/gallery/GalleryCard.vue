@@ -6,13 +6,23 @@
 
             <!-- Hover overlay -->
             <div class="gallery-card-overlay">
-                <button class="gallery-delete-btn" title="حذف الصورة" @click.stop="$emit('delete', item)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                </button>
+                <div class="gallery-card-actions">
+                    <button class="gallery-action-btn edit-btn" title="تعديل" @click.stop="$emit('edit', item)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+                        </svg>
+                    </button>
+                    <button class="gallery-action-btn delete-btn" title="حذف الصورة"
+                        @click.stop="$emit('delete', item)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -28,7 +38,7 @@ defineProps({
     item: { type: Object, required: true },
 })
 
-defineEmits(['click', 'delete'])
+defineEmits(['click', 'edit', 'delete'])
 </script>
 
 <style scoped>
@@ -87,23 +97,46 @@ defineEmits(['click', 'delete'])
     opacity: 1;
 }
 
-.gallery-delete-btn {
-    width: 38px;
-    height: 38px;
+/* Action buttons container */
+.gallery-card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Shared action btn */
+.gallery-action-btn {
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: rgba(239, 68, 68, 0.85);
     color: white;
     border: none;
     cursor: pointer;
     backdrop-filter: blur(8px);
     transition: all 0.2s;
+}
+
+/* Edit button */
+.edit-btn {
+    background: rgba(14, 165, 233, 0.85);
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.4);
+}
+
+.edit-btn:hover {
+    background: #0ea5e9;
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.6);
+}
+
+/* Delete button */
+.delete-btn {
+    background: rgba(239, 68, 68, 0.85);
     box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);
 }
 
-.gallery-delete-btn:hover {
+.delete-btn:hover {
     background: #ef4444;
     transform: scale(1.1);
     box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);

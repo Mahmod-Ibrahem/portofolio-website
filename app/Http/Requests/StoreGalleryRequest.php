@@ -14,12 +14,8 @@ class StoreGalleryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // single upload
-            'image'    => 'required_without:images|file|mimes:jpg,jpeg,png,webp|max:4096',
-            // multi upload
-            'images'   => 'required_without:image|array',
-            'images.*' => 'file|mimes:jpg,jpeg,png,webp|max:4096',
-            'title'    => 'nullable|string|max:255',
+            'title'    => 'required|string|max:255',
+            'image'    => 'required|file|mimes:jpg,jpeg,png,webp|max:4096',
             'alt_text' => 'nullable|string|max:255',
         ];
     }
@@ -27,14 +23,12 @@ class StoreGalleryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'image.required_without'  => 'يجب رفع صورة واحدة على الأقل',
-            'image.file'              => 'يجب أن يكون الملف صورة',
-            'image.mimes'             => 'الصيغ المسموحة: jpg, jpeg, png, webp',
-            'image.max'               => 'حجم الصورة لا يجب أن يتجاوز 4 ميجابايت',
-            'images.required_without' => 'يجب رفع صورة واحدة على الأقل',
-            'images.*.file'           => 'يجب أن يكون كل ملف صورة',
-            'images.*.mimes'          => 'الصيغ المسموحة: jpg, jpeg, png, webp',
-            'images.*.max'            => 'حجم كل صورة لا يجب أن يتجاوز 4 ميجابايت',
+            'title.required' => 'عنوان الصورة مطلوب',
+            'title.max'      => 'عنوان الصورة لا يجب أن يتجاوز 255 حرف',
+            'image.required'  => 'يجب رفع صورة',
+            'image.file'      => 'يجب أن يكون الملف صورة',
+            'image.mimes'     => 'الصيغ المسموحة: jpg, jpeg, png, webp',
+            'image.max'       => 'حجم الصورة لا يجب أن يتجاوز 4 ميجابايت',
         ];
     }
 }

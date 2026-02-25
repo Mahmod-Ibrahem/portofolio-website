@@ -30,15 +30,29 @@ export const useGalleryStore = defineStore('gallery', {
       }
     },
 
-    async uploadImages(formData, onProgress) {
+    async uploadImage(formData, onProgress) {
       const { data } = await api.post('/galleries', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: onProgress,
       })
-      // Prepend newly created items to gallery list
-      if (data.data && Array.isArray(data.data)) {
-        this.galleries.unshift(...data.data)
-        this.meta.total += data.data.length
+      // Prepend newly created item to gallery list
+      if (data.data) {
+        this.galleries.unshift(data.data)
+        this.meta.total += 1
+      }
+      return data
+    },
+
+    async updateGallery(id, formData, onProgress) {
+      const { data } = await api.post(`/galleries/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: onProgress,
+      })
+      if (data.data) {
+        const index = this.galleries.findIndex(g => g.id === id)
+        if (index !== -1) {
+          this.galleries[index] = data.data
+        }
       }
       return data
     },

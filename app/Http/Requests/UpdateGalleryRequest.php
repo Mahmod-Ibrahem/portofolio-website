@@ -14,8 +14,8 @@ class UpdateGalleryRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'title'      => 'required|string|max:255',
             'image'      => 'nullable|file|mimes:jpg,jpeg,png,webp|max:4096',
-            'title'      => 'nullable|string|max:255',
             'alt_text'   => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
             'is_active'  => 'nullable|boolean',
@@ -25,9 +25,11 @@ class UpdateGalleryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'image.file'  => 'يجب أن يكون الملف صورة',
-            'image.mimes' => 'الصيغ المسموحة: jpg, jpeg, png, webp',
-            'image.max'   => 'حجم الصورة لا يجب أن يتجاوز 4 ميجابايت',
+            'title.required' => 'عنوان الصورة مطلوب',
+            'title.max'      => 'عنوان الصورة لا يجب أن يتجاوز 255 حرف',
+            'image.file'     => 'يجب أن يكون الملف صورة',
+            'image.mimes'    => 'الصيغ المسموحة: jpg, jpeg, png, webp',
+            'image.max'      => 'حجم الصورة لا يجب أن يتجاوز 4 ميجابايت',
         ];
     }
 }
