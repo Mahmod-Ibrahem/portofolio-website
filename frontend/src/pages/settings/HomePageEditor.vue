@@ -258,42 +258,54 @@
                 <div v-if="!form.languages?.length" class="text-center py-3 text-slate-400">لا توجد لغات</div>
             </div> -->
 
-            <!-- ═══════════ CERTIFICATIONS ═══════════ -->
-            <!-- <div class="card p-6 space-y-5">
+            <!-- ═══════════ STATISTICS ═══════════ -->
+            <div class="card p-6 space-y-5">
                 <div class="flex items-center justify-between border-b pb-3">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">📜 الشهادات</h2>
-                    <button type="button" @click="addCertification" class="btn btn-secondary btn-sm">+ إضافة</button>
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">📊 احصائيات البحوث والدورات
+                        التدريبية والإستشارات التربوية</h2>
+                    <button type="button" @click="addStatistic" class="btn btn-secondary btn-sm">+ إضافة</button>
                 </div>
-                <div v-for="(c, idx) in form.certifications" :key="idx"
+                <div v-for="(s, idx) in form.statistics" :key="idx"
                     class="flex items-center gap-4 p-3 border rounded-lg bg-slate-50 dark:bg-slate-800/50">
                     <div class="w-36">
-                        <label class="form-label">النوع</label>
-                        <input v-model="c.type" type="text" class="input" placeholder="نوع الشهادة" />
+                        <label class="form-label">القيمة</label>
+                        <input v-model="s.value" type="text" class="input" placeholder="+100" />
+                    </div>
+                    <div class="flex-1">
+                        <label class="form-label">العنوان</label>
+                        <input v-model="s.label" type="text" class="input" placeholder="عنوان الاحصائية" />
                     </div>
                     <div class="flex-1">
                         <label class="form-label">الوصف</label>
-                        <input v-model="c.description" type="text" class="input" placeholder="وصف الشهادة" />
+                        <input v-model="s.description" type="text" class="input" placeholder="وصف الاحصائية" />
                     </div>
-                    <button type="button" @click="removeCertification(idx)"
+                    <button type="button" @click="removeStatistic(idx)"
                         class="text-red-500 hover:text-red-700 mt-6">✕</button>
                 </div>
-                <div v-if="!form.certifications?.length" class="text-center py-4 text-slate-400">لا توجد شهادات</div>
-            </div> -->
+                <div v-if="!form.statistics?.length" class="text-center py-4 text-slate-400">لا توجد احصائيات</div>
+            </div>
 
-            <!-- ═══════════ EXPERIENCES ═══════════ -->
-            <!-- <div class="card p-6 space-y-5">
+            <!-- ═══════════ HONORS ═══════════ -->
+            <div class="card p-6 space-y-5">
                 <div class="flex items-center justify-between border-b pb-3">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">💼 الخبرات</h2>
-                    <button type="button" @click="addExperience" class="btn btn-secondary btn-sm">+ إضافة</button>
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">🏅 التكريمات</h2>
+                    <button type="button" @click="addHonor" class="btn btn-secondary btn-sm">+ إضافة</button>
                 </div>
-                <div v-for="(_, idx) in form.experiences" :key="idx" class="flex items-center gap-3 mb-2">
-                    <span class="text-slate-400 font-bold">•</span>
-                    <input v-model="form.experiences[idx]" type="text" class="input flex-1" placeholder="وصف الخبرة" />
-                    <button type="button" @click="removeExperience(idx)"
-                        class="text-red-500 hover:text-red-700">✕</button>
+                <div v-for="(h, idx) in form.honors" :key="idx"
+                    class="flex flex-col md:flex-row items-start md:items-center gap-3 mb-2 p-3 border rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                    <div class="w-full md:w-32">
+                        <label class="form-label">السنة</label>
+                        <input v-model="h.year" type="text" class="input" placeholder="2024" />
+                    </div>
+                    <div class="flex-1 w-full">
+                        <label class="form-label">الوصف</label>
+                        <input v-model="h.description" type="text" class="input w-full" placeholder="وصف التكريم" />
+                    </div>
+                    <button type="button" @click="removeHonor(idx)"
+                        class="text-red-500 hover:text-red-700 mt-6 self-end md:self-auto">✕</button>
                 </div>
-                <div v-if="!form.experiences?.length" class="text-center py-3 text-slate-400">لا توجد خبرات</div>
-            </div> -->
+                <div v-if="!form.honors?.length" class="text-center py-3 text-slate-400">لا توجد تكريمات</div>
+            </div>
 
             <!-- ═══════════ MEDIA APPEARANCES ═══════════ -->
             <!-- <div class="card p-6 space-y-5">
@@ -355,8 +367,8 @@ const form = ref({
     social_links: [],
     skills: [],
     languages: [],
-    certifications: [],
-    experiences: [],
+    statistics: [],
+    honors: [],
     media_appearances: [],
 })
 
@@ -392,13 +404,13 @@ function removeSkill(i) { form.value.skills.splice(i, 1) }
 function addLanguage() { form.value.languages.push('') }
 function removeLanguage(i) { form.value.languages.splice(i, 1) }
 
-// Certifications
-function addCertification() { form.value.certifications.push({ type: '', description: '' }) }
-function removeCertification(i) { form.value.certifications.splice(i, 1) }
+// Statistics
+function addStatistic() { form.value.statistics.push({ value: '', label: '', description: '' }) }
+function removeStatistic(i) { form.value.statistics.splice(i, 1) }
 
-// Experiences
-function addExperience() { form.value.experiences.push('') }
-function removeExperience(i) { form.value.experiences.splice(i, 1) }
+// Honors
+function addHonor() { form.value.honors.push({ year: '', description: '' }) }
+function removeHonor(i) { form.value.honors.splice(i, 1) }
 
 // Media Appearances
 function addMediaAppearance() { form.value.media_appearances.push('') }
@@ -428,8 +440,8 @@ async function loadData() {
             social_links: d.social_links ? JSON.parse(JSON.stringify(d.social_links)) : [],
             skills: d.skills ? [...d.skills] : [],
             languages: d.languages ? [...d.languages] : [],
-            certifications: d.certifications ? JSON.parse(JSON.stringify(d.certifications)) : [],
-            experiences: d.experiences ? [...d.experiences] : [],
+            statistics: d.statistics ? JSON.parse(JSON.stringify(d.statistics)) : [],
+            honors: d.honors ? JSON.parse(JSON.stringify(d.honors)) : [],
             media_appearances: d.media_appearances ? [...d.media_appearances] : [],
         }
     }
@@ -463,8 +475,8 @@ async function handleSave() {
     fd.append('social_links', JSON.stringify(form.value.social_links))
     fd.append('skills', JSON.stringify(form.value.skills))
     fd.append('languages', JSON.stringify(form.value.languages))
-    fd.append('certifications', JSON.stringify(form.value.certifications))
-    fd.append('experiences', JSON.stringify(form.value.experiences))
+    fd.append('statistics', JSON.stringify(form.value.statistics))
+    fd.append('honors', JSON.stringify(form.value.honors))
     fd.append('media_appearances', JSON.stringify(form.value.media_appearances))
 
     const res = await store.saveSingleton(fd)

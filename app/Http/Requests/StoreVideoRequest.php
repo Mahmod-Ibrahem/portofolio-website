@@ -19,6 +19,7 @@ class StoreVideoRequest extends FormRequest
             'video_url' => 'required|string|url|max:500',
             'thumbnail' => 'nullable|image|max:2048',
             'is_published' => 'nullable|boolean',
+            'views' => 'nullable|integer',
         ];
     }
 
@@ -30,6 +31,7 @@ class StoreVideoRequest extends FormRequest
             'video_url.url' => 'رابط الفيديو غير صالح',
             'thumbnail.image' => 'يجب أن تكون الصورة المصغرة من نوع صورة',
             'thumbnail.max' => 'حجم الصورة المصغرة لا يجب أن يتجاوز 2 ميجابايت',
+            'views.integer' => 'عدد المشاهدات يجب أن يكون رقمًا',
         ];
     }
 }

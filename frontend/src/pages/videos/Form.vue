@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ isEdit ? 'تعديل الفيديو' : 'إضافة فيديو  جديد' }}</h1>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ isEdit ? 'تعديل الفيديو' : 'إضافة فيديو جديد' }}</h1>
             <RouterLink :to="{ name: 'videos' }" class="btn btn-secondary">← العودة</RouterLink>
         </div>
 
@@ -44,6 +44,14 @@
                     </div>
                 </div>
 
+                <!-- Views -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">عدد المشاهدات
+                        (اختياري)</label>
+                    <input v-model="form.views" type="number" min="0" class="input" placeholder="0" />
+                    <p v-if="errors.views" class="text-red-500 text-sm mt-1">{{ errors.views[0] }}</p>
+                </div>
+
                 <!-- Published -->
                 <div class="flex items-center gap-3">
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -82,6 +90,7 @@ const form = ref({
     title: '',
     video_url: '',
     description: '',
+    views: 0,
     is_published: false,
     existingImage: null,
 })
@@ -103,6 +112,7 @@ async function submitForm() {
     fd.append('title', form.value.title)
     fd.append('video_url', form.value.video_url)
     fd.append('description', form.value.description || '')
+    fd.append('views', form.value.views || 0)
     fd.append('is_published', form.value.is_published ? '1' : '0')
     if (thumbFile.value) fd.append('thumbnail', thumbFile.value)
 
@@ -127,6 +137,7 @@ onMounted(async () => {
             form.value.title = res.data.title
             form.value.video_url = res.data.video_url
             form.value.description = res.data.description || ''
+            form.value.views = res.data.views || 0
             form.value.is_published = res.data.is_published
             form.value.existingImage = res.data.thumbnail
         }

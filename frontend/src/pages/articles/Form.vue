@@ -43,6 +43,14 @@
                     </div>
                 </div>
 
+                <!-- Views -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">عدد المشاهدات
+                        (اختياري)</label>
+                    <input v-model="form.views" type="number" min="0" class="input" placeholder="0" />
+                    <p v-if="errors.views" class="text-red-500 text-sm mt-1">{{ errors.views[0] }}</p>
+                </div>
+
                 <!-- Published -->
                 <div class="flex items-center gap-3">
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -81,6 +89,7 @@ const form = ref({
     title: '',
     content: '',
     link: '',
+    views: 0,
     is_published: false,
     existingImage: null,
 })
@@ -102,6 +111,7 @@ async function submitForm() {
     fd.append('title', form.value.title)
     fd.append('content', form.value.content)
     if (form.value.link) fd.append('link', form.value.link)
+    fd.append('views', form.value.views || 0)
     fd.append('is_published', form.value.is_published ? '1' : '0')
     if (coverFile.value) fd.append('cover_image', coverFile.value)
 
@@ -126,6 +136,7 @@ onMounted(async () => {
             form.value.title = res.data.title
             form.value.content = res.data.content
             form.value.link = res.data.link || ''
+            form.value.views = res.data.views || 0
             form.value.is_published = res.data.is_published
             form.value.existingImage = res.data.cover_image
         }

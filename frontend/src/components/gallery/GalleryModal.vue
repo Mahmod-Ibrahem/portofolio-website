@@ -188,14 +188,6 @@ function validate() {
     errors.title = ''
     errors.image = ''
 
-    if (!form.title.trim()) {
-        errors.title = 'العنوان مطلوب'
-        valid = false
-    } else if (form.title.length > 255) {
-        errors.title = 'العنوان لا يجب أن يتجاوز 255 حرف'
-        valid = false
-    }
-
     if (!isEditing.value && !selectedFile.value) {
         errors.image = 'الصورة مطلوبة'
         valid = false

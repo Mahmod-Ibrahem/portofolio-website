@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\VideoController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\StatsController;
 use App\Http\Controllers\Api\GalleryController;
+use App\Http\Controllers\Api\V1\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,12 +35,16 @@ Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 */
 
 Route::prefix('v1')->group(function () {
+    // Public Book routes
+    Route::get('books', [BookController::class, 'index']);
+    Route::get('books/{book}', [BookController::class, 'show']);
     // Profile (single user - show/update)
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Home Page Singleton
+    // Home Page Singleton and Data
     Route::get('home-singleton', [HomeController::class, 'singleton']);
+    Route::get('homepage-data', [HomeController::class, 'homepageData']);
 
     // Public Article & Video routes
     Route::get('articles', [ArticleController::class, 'index']);
@@ -74,7 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
-
+    // Book Management (Auth)
+    Route::post('books', [BookController::class, 'store']);
+    Route::post('books/{book}', [BookController::class, 'update']);
+    Route::delete('books/{book}', [BookController::class, 'destroy']);
     // Home Page Singleton Update (Auth)
     Route::post('home-singleton', [HomeController::class, 'updateSingleton']);
 

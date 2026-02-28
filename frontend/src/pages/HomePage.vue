@@ -4,16 +4,23 @@ import api from '../services/api'
 import HomeNavbar from '../components/HomeNavbar.vue'
 import HomeGalleryCarousel from '../components/HomeGalleryCarousel.vue'
 
-/* ── Home Singleton Data ── */
+/* ── Home Data ── */
 const page = ref(null)
 const pageLoading = ref(true)
+const books = ref([])
 
-async function loadHomeSingleton() {
+async function loadHomePageData() {
     pageLoading.value = true
     try {
-        const res = await api.get('/v1/home-singleton')
-        page.value = res.data.data
-    } catch (e) { /* silent */ }
+        const res = await api.get('/v1/homepage-data')
+        const data = res.data.data
+        page.value = data.page
+        articles.value = data.articles.data
+        articlesMeta.value = data.articles.meta
+        videos.value = data.videos.data
+        videosMeta.value = data.videos.meta
+        books.value = data.books
+    } catch (e) { console.error('Error loading homepage data', e) }
     pageLoading.value = false
 }
 
@@ -85,9 +92,7 @@ function initObserver() {
 }
 
 onMounted(async () => {
-    await loadHomeSingleton()
-    loadArticles()
-    loadVideos()
+    await loadHomePageData()
     // Track visit (fire-and-forget)
     api.post('/v1/track-visit').catch(() => { })
     await nextTick()
@@ -222,27 +227,6 @@ onUnmounted(() => observer?.disconnect())
                 </div>
             </section>
 
-            <!-- ═══════════════ CONSULTATIONS ═══════════════ -->
-            <!-- <section class="section-consult" id="consult" aria-labelledby="consult-heading">
-                <div class="consult-bg" aria-hidden="true"></div>
-                <div class="container">
-                    <h2 id="consult-heading" class="consult-heading reveal">
-                        <span class="consult-heading__icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                            </svg>
-                        </span>
-                        <span class="consult-heading__text">الاستشارات</span>
-                        <span class="consult-heading__line" aria-hidden="true"></span>
-                    </h2>
-                    <div class="consult-card reveal">
-                        <p class="consult-body">{{ page.consultations_text }}</p>
-                    </div>
-                </div>
-            </section> -->
-
             <!-- ═══════════════ VOLUNTEERING ═══════════════ -->
             <section class="section-volunteer" id="volunteer" aria-labelledby="volunteer-heading">
                 <div class="volunteer-bg" aria-hidden="true"></div>
@@ -319,6 +303,65 @@ onUnmounted(() => observer?.disconnect())
                 </div>
             </section>
 
+            <!-- ═══════════════ HONORS (التكريمات) ═══════════════ -->
+            <section v-if="page.honors?.length" class="section-honors" id="honors">
+                <div class="honors-bg" aria-hidden="true"></div>
+                <div class="container">
+                    <h2 class="honors-heading reveal">
+                        <span class="honors-heading__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                            </svg>
+                        </span>
+                        <span class="honors-heading__text">التكريمات</span>
+                        <span class="honors-heading__line" aria-hidden="true"></span>
+                    </h2>
+
+                    <div class="honors-grid">
+                        <div v-for="(honor, idx) in page.honors" :key="idx" class="reveal honor-card">
+                            <div class="honor-card__glow" aria-hidden="true"></div>
+                            <div class="honor-card__inner">
+                                <div class="honor-card__year">{{ honor.year }}</div>
+                                <p class="honor-card__desc">{{ honor.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════ STATISTICS (احصائيات) ═══════════════ -->
+            <section v-if="page.statistics?.length" class="section-statistics" id="statistics">
+                <div class="statistics-bg" aria-hidden="true"></div>
+                <div class="container">
+                    <h2 class="statistics-heading reveal">
+                        <span class="statistics-heading__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                            </svg>
+                        </span>
+                        <span class="statistics-heading__text">احصائيات البحوث والدورات التدريبية والإستشارات
+                            التربوية</span>
+                        <span class="statistics-heading__line" aria-hidden="true"></span>
+                    </h2>
+
+                    <div class="statistics-grid">
+                        <div v-for="(stat, idx) in page.statistics" :key="idx" class="reveal statistics-card">
+                            <div class="statistics-card__glow" aria-hidden="true"></div>
+                            <div class="statistics-card__inner">
+                                <span class="statistics-card__value" dir="ltr">{{ stat.value }}</span>
+                                <span class="statistics-card__divider" aria-hidden="true"></span>
+                                <span class="statistics-card__label">{{ stat.label }}</span>
+                                <span class="statistics-card__desc">{{ stat.description }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- ═══════════════ LATEST VIDEOS ═══════════════ -->
             <section class="section-content section-content--dark" id="videos" aria-labelledby="videos-heading">
                 <div class="container">
@@ -372,6 +415,46 @@ onUnmounted(() => observer?.disconnect())
 
             <!-- ═══════════════ GALLERY CAROUSEL ═══════════════ -->
             <HomeGalleryCarousel />
+
+            <!-- ═══════════════ BOOKS CAROUSEL ═══════════════ -->
+            <section v-if="books.length" class="section-books" id="books">
+                <div class="books-bg" aria-hidden="true"></div>
+                <div class="homepage-container"
+                    style="max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1;">
+                    <!-- Heading -->
+                    <div class="books-heading reveal">
+                        <span class="books-heading__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                            </svg>
+                        </span>
+                        <h2 class="books-heading__text">مؤلفاتي</h2>
+                        <span class="books-heading__line" aria-hidden="true"></span>
+                    </div>
+
+                    <!-- Carousel -->
+                    <div class="books-carousel">
+                        <div class="books-track">
+                            <a v-for="book in books" :key="book.id" :href="book.url" target="_blank"
+                                rel="noopener noreferrer" class="book-slide">
+                                <div class="book-slide__img-wrap">
+                                    <img v-if="book.image" :src="book.image" alt="" class="book-slide__img"
+                                        loading="lazy" />
+                                    <div v-else class="book-slide__placeholder">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- ═══════════════ FOOTER / CONTACT ═══════════════ -->
             <footer class="site-footer" id="contact" role="contentinfo">
@@ -526,6 +609,380 @@ onUnmounted(() => observer?.disconnect())
     gap: 60px;
     position: relative;
     z-index: 2;
+}
+
+/* ═══════════ STATISTICS ═══════════ */
+.section-statistics {
+    padding: 7rem 0;
+    background: linear-gradient(170deg, #0a0a0a 0%, #141414 50%, #0e0e0e 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.statistics-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(242, 236, 230, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(242, 236, 230, .03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+.statistics-heading {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.statistics-heading__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(242, 236, 230, .06);
+    border: 1px solid rgba(242, 236, 230, .08);
+    color: #E0D6CC;
+    margin-bottom: 0.5rem;
+}
+
+.statistics-heading__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.statistics-heading__text {
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    font-weight: 800;
+    color: #FFFDFB;
+    letter-spacing: -.02em;
+}
+
+.statistics-heading__line {
+    display: block;
+    width: 50px;
+    height: 3px;
+    border-radius: 100px;
+    background: linear-gradient(90deg, transparent, #E0D6CC, transparent);
+}
+
+.statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.statistics-card {
+    text-align: center;
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 400ms cubic-bezier(.25, .46, .45, .94);
+}
+
+.statistics-card:hover {
+    transform: translateY(-6px);
+}
+
+.statistics-card__glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: 19px;
+    background: conic-gradient(from var(--angle, 0deg), transparent 30%, rgba(242, 236, 230, .15) 50%, transparent 70%);
+    animation: borderSpin 4s linear infinite;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 400ms ease;
+}
+
+.statistics-card:hover .statistics-card__glow {
+    opacity: 1;
+}
+
+.statistics-card__inner {
+    position: relative;
+    z-index: 1;
+    padding: 2.5rem 1.5rem;
+    border-radius: 18px;
+    background: rgba(242, 236, 230, .04);
+    border: 1px solid rgba(242, 236, 230, .08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    transition: border-color 400ms ease, background 400ms ease;
+}
+
+.statistics-card:hover .statistics-card__inner {
+    border-color: rgba(242, 236, 230, .16);
+    background: rgba(242, 236, 230, .07);
+}
+
+.statistics-card__value {
+    display: block;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    color: #FFFDFB;
+    line-height: 1.1;
+    letter-spacing: -.03em;
+    transition: transform 300ms ease;
+}
+
+.statistics-card:hover .statistics-card__value {
+    transform: scale(1.08);
+}
+
+.statistics-card__divider {
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #E0D6CC, transparent);
+    margin: 14px auto;
+    border-radius: 100px;
+    transition: width 300ms ease;
+}
+
+.statistics-card:hover .statistics-card__divider {
+    width: 48px;
+    background: linear-gradient(90deg, transparent, #F2ECE6, transparent);
+}
+
+.statistics-card__label {
+    font-size: .95rem;
+    color: #F2ECE6;
+    line-height: 1.6;
+    font-weight: 600;
+    transition: color 300ms ease;
+}
+
+.statistics-card:hover .statistics-card__label {
+    color: #FFFDFB;
+}
+
+.statistics-card__desc {
+    font-size: .82rem;
+    color: #E0D6CC;
+    line-height: 1.5;
+    font-weight: 400;
+    margin-top: 6px;
+    opacity: .8;
+    transition: opacity 300ms ease;
+}
+
+.statistics-card:hover .statistics-card__desc {
+    opacity: 1;
+}
+
+.stat-card__content {
+    position: relative;
+    z-index: 1;
+    padding: 2.25rem 1.5rem;
+    border-radius: 18px;
+    background: rgba(242, 236, 230, .04);
+    border: 1px solid rgba(242, 236, 230, .08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: border-color 400ms ease, background 400ms ease;
+}
+
+.stat-card:hover .stat-card__content {
+    border-color: rgba(242, 236, 230, .16);
+    background: rgba(242, 236, 230, .07);
+}
+
+.stat-num {
+    display: block;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #FFFDFB;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    transition: transform 300ms ease;
+}
+
+.stat-card:hover .stat-num {
+    transform: scale(1.08);
+}
+
+.stat-divider {
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #E0D6CC, transparent);
+    margin: 14px auto;
+    border-radius: 100px;
+    transition: width 300ms ease;
+}
+
+.stat-card:hover .stat-divider {
+    width: 48px;
+    background: linear-gradient(90deg, transparent, #F2ECE6, transparent);
+}
+
+.stat-label {
+    font-size: .92rem;
+    color: #E0D6CC;
+    line-height: 1.6;
+    font-weight: 400;
+    transition: color 300ms ease;
+}
+
+.stat-card:hover .stat-label {
+    color: #F2ECE6;
+}
+
+
+/* ═══════════ HONORS ═══════════ */
+.section-honors {
+    padding: 7rem 0;
+    background: linear-gradient(170deg, #0a0a0a 0%, #131313 50%, #0d0d0d 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.honors-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(242, 236, 230, .04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+
+.honors-heading {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.honors-heading__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(242, 236, 230, .06);
+    border: 1px solid rgba(242, 236, 230, .08);
+    color: #E0D6CC;
+    margin-bottom: 0.5rem;
+}
+
+.honors-heading__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.honors-heading__text {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #FFFDFB;
+    letter-spacing: -.02em;
+}
+
+.honors-heading__line {
+    display: block;
+    width: 50px;
+    height: 3px;
+    border-radius: 100px;
+    background: linear-gradient(90deg, transparent, #E0D6CC, transparent);
+}
+
+.honors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.honor-card {
+    position: relative;
+    border-radius: 20px;
+    text-align: center;
+    transition: transform 400ms cubic-bezier(.25, .46, .45, .94);
+}
+
+.honor-card:hover {
+    transform: translateY(-8px);
+}
+
+.honor-card__glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: 21px;
+    background: conic-gradient(from var(--angle, 0deg), transparent 30%, rgba(242, 236, 230, .15) 50%, transparent 70%);
+    animation: borderSpin 4s linear infinite;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 400ms ease;
+}
+
+.honor-card:hover .honor-card__glow {
+    opacity: 1;
+}
+
+.honor-card__inner {
+    position: relative;
+    z-index: 1;
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    background: rgba(242, 236, 230, .04);
+    border: 1px solid rgba(242, 236, 230, .08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 400ms ease, background 400ms ease;
+}
+
+.honor-card:hover .honor-card__inner {
+    border-color: rgba(242, 236, 230, .16);
+    background: rgba(242, 236, 230, .07);
+}
+
+.honor-card__year {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 20px;
+    border-radius: 100px;
+    background: rgba(242, 236, 230, .08);
+    border: 1px solid rgba(242, 236, 230, .12);
+    color: #F2ECE6;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: .04em;
+    transition: all 350ms ease;
+}
+
+.honor-card:hover .honor-card__year {
+    background: #F2ECE6;
+    color: #1B2A3B;
+    border-color: #F2ECE6;
+    box-shadow: 0 0 20px rgba(242, 236, 230, .15);
+}
+
+.honor-card__desc {
+    font-size: 1rem;
+    color: #E0D6CC;
+    line-height: 1.9;
+    margin: 0;
+    transition: color 300ms ease;
+}
+
+.honor-card:hover .honor-card__desc {
+    color: #FFFDFB;
 }
 
 /* Stagger animation */
@@ -2239,6 +2696,152 @@ onUnmounted(() => observer?.disconnect())
 
     .section-content {
         padding: 60px 0;
+    }
+}
+
+/* ═══════════ BOOKS CAROUSEL ═══════════ */
+.section-books {
+    padding: 7rem 0;
+    background: linear-gradient(170deg, #080808 0%, #111 40%, #0d0d0d 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.books-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(242, 236, 230, .03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+.books-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.books-heading__icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(242, 236, 230, .06);
+    border: 1px solid rgba(242, 236, 230, .08);
+    color: #E0D6CC;
+    margin-bottom: .5rem;
+}
+
+.books-heading__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.books-heading__text {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #FFFDFB;
+    letter-spacing: -.02em;
+}
+
+.books-heading__line {
+    width: 50px;
+    height: 3px;
+    border-radius: 100px;
+    background: linear-gradient(90deg, transparent, #E0D6CC, transparent);
+}
+
+/* Carousel Container */
+.books-carousel {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(242, 236, 230, .15) transparent;
+    padding-bottom: 1rem;
+}
+
+.books-carousel::-webkit-scrollbar {
+    height: 6px;
+}
+
+.books-carousel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.books-carousel::-webkit-scrollbar-thumb {
+    background: rgba(242, 236, 230, .15);
+    border-radius: 100px;
+}
+
+.books-track {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem .5rem;
+    min-width: min-content;
+}
+
+/* Book Slide */
+.book-slide {
+    flex-shrink: 0;
+    width: 180px;
+    text-decoration: none;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(242, 236, 230, .04);
+    border: 1px solid rgba(242, 236, 230, .08);
+    transition: transform .4s cubic-bezier(.25, .46, .45, .94),
+        box-shadow .4s ease,
+        border-color .3s ease;
+    cursor: pointer;
+}
+
+.book-slide:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .35), 0 0 30px rgba(242, 236, 230, .08);
+    border-color: rgba(242, 236, 230, .2);
+}
+
+.book-slide__img-wrap {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 13px;
+}
+
+.book-slide__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s cubic-bezier(.25, .46, .45, .94);
+}
+
+.book-slide:hover .book-slide__img {
+    transform: scale(1.06);
+}
+
+.book-slide__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #1a1a1a;
+    color: #E0D6CC;
+}
+
+@media (max-width: 640px) {
+    .section-books {
+        padding: 4rem 0 3rem;
+    }
+
+    .book-slide {
+        width: 140px;
+    }
+
+    .books-track {
+        gap: 1rem;
     }
 }
 </style>

@@ -32,6 +32,10 @@ class HomePageResource extends JsonResource
             'certifications' => $this->certifications,
             'experiences' => $this->experiences,
             'media_appearances' => $this->media_appearances,
+            'honors' => $this->honors,
+            'statistics' => $this->statistics,
+            'books' => $this->books,
+
         ];
     }
 }

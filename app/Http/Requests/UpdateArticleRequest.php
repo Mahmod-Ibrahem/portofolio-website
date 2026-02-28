@@ -19,6 +19,7 @@ class UpdateArticleRequest extends FormRequest
             'link' => 'nullable|string|url',
             'cover_image' => 'nullable|image|max:2048',
             'is_published' => 'nullable|boolean',
+            'views' => 'nullable|integer',
         ];
     }
 
@@ -30,6 +31,7 @@ class UpdateArticleRequest extends FormRequest
             'link.url' => 'يجب أن يكون الرابط بصيغة صحيحة',
             'cover_image.image' => 'يجب أن تكون صورة الغلاف من نوع صورة',
             'cover_image.max' => 'حجم صورة الغلاف لا يجب أن يتجاوز 2 ميجابايت',
+            'views.integer' => 'عدد المشاهدات يجب أن يكون رقمًا',
         ];
     }
 }

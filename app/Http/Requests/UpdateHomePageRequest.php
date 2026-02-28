@@ -13,7 +13,7 @@ class UpdateHomePageRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $jsonFields = ['expertise_cards', 'achievements', 'volunteering_bullets', 'social_links', 'skills', 'languages', 'certifications', 'experiences', 'media_appearances'];
+        $jsonFields = ['expertise_cards', 'honors', 'statistics', 'achievements', 'volunteering_bullets', 'social_links', 'skills', 'languages', 'certifications', 'experiences', 'media_appearances'];
 
         foreach ($jsonFields as $field) {
             if ($this->has($field) && is_string($this->input($field))) {
@@ -60,6 +60,14 @@ class UpdateHomePageRequest extends FormRequest
             'experiences.*' => 'string',
             'media_appearances' => 'nullable|array',
             'media_appearances.*' => 'string',
+            'honors' => 'nullable|array',
+            'honors.*.year' => 'required_with:honors|string',
+            'honors.*.title' => 'nullable|string',
+            'honors.*.description' => 'required_with:honors|string',
+            'statistics' => 'nullable|array',
+            'statistics.*.value' => 'required_with:statistics|string',
+            'statistics.*.label' => 'required_with:statistics|string',
+            'statistics.*.description' => 'nullable|string',
         ];
     }
 

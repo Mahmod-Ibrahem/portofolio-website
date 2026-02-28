@@ -31,6 +31,8 @@ class HomePage extends Model
         'certifications',
         'experiences',
         'media_appearances',
+        'honors',
+        'statistics',
     ];
 
     protected $casts = [
@@ -43,6 +45,8 @@ class HomePage extends Model
         'certifications' => 'array',
         'experiences' => 'array',
         'media_appearances' => 'array',
+        'honors' => 'array',
+        'statistics' => 'array',
     ];
 
     /**

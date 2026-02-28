@@ -114,6 +114,13 @@ const routes = [
         component: () => import('../pages/articles/Form.vue'),
         meta: { title: 'تعديل مقالة' }
       },
+            // Books
+      {
+        path: 'books',
+        name: 'books',
+        component: () => import('../pages/books/BooksPage.vue'),
+        meta: { title: 'الكتب' }
+      },
       // Videos
       {
         path: 'videos',
